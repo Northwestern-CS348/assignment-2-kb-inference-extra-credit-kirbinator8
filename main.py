@@ -1,21 +1,23 @@
 import unittest
-import read, copy
+import read
+import copy
 from logical_classes import *
 from student_code import KnowledgeBase
+
 
 class KBTest(unittest.TestCase):
 
     def setUp(self):
         # # Assert starter facts
         self.KB = KnowledgeBase([], [])
-        
+
     def compare(self, expected, actual):
         elist = expected.split('\n')
         alist = actual.split('\n')
         for e, a in zip(elist, alist):
             if e.lower() != a.rstrip().lower():
-                self.assertEquals('"{0}" ({1} lead spaces)'.format(e, len(e) - len(e.lstrip())), 
-                    '"{0}" ({1} lead spaces)'.format(a, len(a) - len(a.strip())))
+                self.assertEquals('"{0}" ({1} lead spaces)'.format(e, len(e) - len(e.lstrip())),
+                                  '"{0}" ({1} lead spaces)'.format(a, len(a) - len(a.strip())))
 
     def test01(self):
         # KB does not contain
@@ -44,7 +46,7 @@ class KBTest(unittest.TestCase):
         # first set of support
         f0.supported_by.append([f3, r4])
         r4.supported_by.append([f2, r3])
-        r3.supported_by.append([f1, r1])        
+        r3.supported_by.append([f1, r1])
 
         # second set of support
         f0.supported_by.append([f4, r5])
@@ -62,8 +64,8 @@ class KBTest(unittest.TestCase):
         r4.asserted = False
         r5.asserted = False
 
-        self.KB.facts.extend([f0,f1,f2,f3,f4,f5])
-        self.KB.rules.extend([r1,r2,r3,r4,r5])
+        self.KB.facts.extend([f0, f1, f2, f3, f4, f5])
+        self.KB.rules.extend([r1, r2, r3, r4, r5])
 
         self.expected = '\
 fact: (eats nyala leaves)\n\

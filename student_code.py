@@ -1,8 +1,10 @@
-import read, copy
+import read
+import copy
 from util import *
 from logical_classes import *
 
 verbose = 0
+
 
 class KnowledgeBase(object):
     def __init__(self, facts=[], rules=[]):
@@ -130,6 +132,17 @@ class KnowledgeBase(object):
         # Implementation goes here
         # Not required for the extra credit assignment
 
+    def convert(self, statement):
+        answer = "("
+        answer = answer + str(statement.predicate)
+
+        for i in statement.terms:
+            answer = answer + " "
+            answer = answer + str(i)
+
+        answer = answer + ")"
+        return answer
+
     def kb_explain(self, fact_or_rule):
         """
         Explain where the fact or rule comes from
@@ -141,7 +154,45 @@ class KnowledgeBase(object):
             string explaining hierarchical support from other Facts and rules
         """
         ####################################################
-        # Student code goes here
+        answer = ""
+        if (fact_or_rule in self.facts):
+            answer = answer + ("fact: " + self.convert(fact_or_rule.statement) + "\n")
+            answer = answer + ("  SUPPORTED BY")
+            for i in fact_or_rule.supported_by:
+                checker = ""
+                if i.checker:
+                    checker = " ASSERTED"
+                if isinstance(i, Fact):
+                    answer = answer + ("  fact: " + self.convert(i.statement) + checker + "\n")
+                if isinstance(i, Rule):
+                    left = "("
+                    for j in i.lhs:
+                        left = left + self.convert(j) + ","
+                    left[-1] = ")"
+                    answer = answer + ("  rule: " + left + " -> " + self.convert(i.rhs) + checker + "\n")
+
+        elif (fact_or_rule in self.rules):
+            left = "("
+            for i in fact_or_rule.lhs:
+                left = left + self.convert(i) + ","
+            left[-1] = ")"
+            answer = answer + ("rule: " + left + " -> " + self.convert(fact_or_rule.rhs) + "\n")
+            answer = answer + ("  SUPPORTED BY")
+            for i in fact_or_rule.supported_by:
+                if isinstance(i, Fact):
+                    answer = answer + ("  fact: " + self.convert(i.statement) + checker + "\n")
+                if isinstance(i, Rule):
+                    left = "("
+                    for j in i.lhs:
+                        left = left + self.convert(j) + ","
+                    left[-1] = ")"
+                    answer = answer + ("  rule: " + left + " -> " + self.convert(i.rhs) + checker + "\n")
+        elif ((isinstance(fact_or_rule, Fact)) and (fact_or_rule not in self.facts)):
+            answer = ("Fact is not in the KB")
+
+        elif (fact_or_rule not in self.rules):
+            answer = ("Rule is not in the KB")
+        return answer
 
 
 class InferenceEngine(object):
@@ -154,10 +205,10 @@ class InferenceEngine(object):
             kb (KnowledgeBase) - A KnowledgeBase
 
         Returns:
-            Nothing            
+            Nothing
         """
         printv('Attempting to infer from {!r} and {!r} => {!r}', 1, verbose,
-            [fact.statement, rule.lhs, rule.rhs])
+               [fact.statement, rule.lhs, rule.rhs])
         ####################################################
         # Implementation goes here
         # Not required for the extra credit assignment
