@@ -160,7 +160,7 @@ class KnowledgeBase(object):
             answer = answer + ("  SUPPORTED BY")
             for i in fact_or_rule.supported_by:
                 checker = ""
-                if i.checker:
+                if (i.asserted):
                     checker = " ASSERTED"
                 if isinstance(i, Fact):
                     answer = answer + ("  fact: " + self.convert(i.statement) + checker + "\n")
